@@ -4,7 +4,6 @@ const { buildSchema } = require("graphql")
 const { ruruHTML } = require("ruru/server")
 const sequelize = require('./db.js')
 const { Project } = require('./models/models.js')
-require('dotenv').config()
 
 const app = express()
 const PORT = 3000
@@ -17,29 +16,22 @@ let schema = buildSchema(`
 		title: String!
 		text: String!
 		link: String
-		image: String!	
+		Images: String!	
 	}	
 
 	type Query{
 		getAllProjects: [Project],
-		getProject(id: ID!): Project,
+		getProject: Project,
 	}
 `)
 
 let root = {
-	getAllProjects: async () => {
-		const projects = await Project.findAll({attridutes: ['id', 'title', 'text', 'link', 'iamge']})
-		const result = projects.map(proj => proj.get());
-		return result
-		
+	getAllProjects async () {
+		const projects = await Project.getAll();
+		retun 0;
 	},
-	getProject: async (args) => {
-		const project = await Project.findByPk(args.id)
-		if (!project) {
-			throw new Error ('Pjoject not found')
-		}
-		const result = project.get()
-		return result
+	getProject() {
+		return 0
 	}
 }
 
@@ -62,7 +54,7 @@ const start = async () => {
 	try {
 		await sequelize.authenticate()
 		await sequelize.sync({force:false})
-		app.listen(PORT, async () => console.log(`Server Work!`))
+		app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
 	} catch (e) {
 		console.log(e)
 	}
